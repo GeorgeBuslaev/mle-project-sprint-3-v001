@@ -1,10 +1,29 @@
 from fastapi import FastAPI, HTTPException, Body
+from fastapi.responses import PlainTextResponse
+from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import BaseModel
+from prometheus_client import Histogram, Counter
 from fast_api_handler import FastApiHandler
 import logging
 
 # Создаем приложение Fast API
 app = FastAPI()
+
+# инициализируем и запускаем экпортёр метрик
+instrumentator = Instrumentator()
+instrumentator.instrument(app).expose(app)
+
+main_app_predictions = Histogram(
+    # имя метрики
+    "main_app_predictions",
+    # описание метрики
+    "Histogram of predictions") #,
+    # указываем корзины для гистограммы
+    #buckets=(1000000, 2000000, 4000000, 5000000, 10000000))
+
+main_app_counter_elite = Counter("main_app_counter_elite", "Count of elite objects")
+
+c = Counter('pos_predict', 'Predictions counter')
 
 # Создаем обработчик запросов для API
 app.handler = FastApiHandler()
@@ -81,6 +100,12 @@ def get_prediction_for_item(
 
         # Здесь должна происходить логика обработки и предсказания модели
         predicted_value = app.handler.handle(all_params)
+
+        c.inc()
+        main_app_predictions.observe(predicted_value["price"])
+        if predicted_value["price"] > 30000000:
+            main_app_counter_elite.inc()
+        
 
         return {"predicted_value": predicted_value}
     
