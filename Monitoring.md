@@ -5,17 +5,26 @@
 - имя метрики
 "main_app_predictions",
 - описание метрики
-"Histogram of predictions")
+"Histogram of predictions"
+- гистограмма позволит оценить распределение прогнозных значений
 
 - имя метрики
 "main_app_counter_elite"
 - описание метрики
-"Count of elite objects")
+"Count of elite objects"
+- счетчик позволит оценить число элитных объектов недвижимости (стоимость более 30 млн. р.)
 
-### Инрфраструткурный 
-http_request_duration_seconds_count
-main_app_predictions_count
+### Инрфраструткурный
+- имя метрики
+"http_request_duration_seconds_count"
+- По данной метрике строится график количества запросов в секунду.
+
+- имя метрики
 rate(http_request_duration_seconds_count[1m])
+-позволяет определить как быстро возрастает время обработки запроса
+
+-имя метрики
 process_virtual_memory_bytes
+- метрика подсчитывает размер виртуальной памяти, занимаемой приложением.
 
 ![alt text](image-1.png)
